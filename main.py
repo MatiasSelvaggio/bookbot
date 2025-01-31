@@ -1,22 +1,31 @@
 import re
 
 def main():
-    with open("books/frankenstein.txt") as f:
-        file_contents = f.read()
-        print("--- Begin report of books/frankenstein.txt ---")
-        count = calcute_words(file_contents)
-        print(f"{count} words found in the document")
-        print()
-        dictionary = count_characters(file_contents)
-        print_report(dictionary)
-        print("--- End report ---")
+    book_path = "books/frankenstein.txt"
+    text = get_book_to_text(book_path)
+    num_words = get_num_words(text)
+    chars_dict = get_chars_dict(text)
+    chars_sorted_list = chars_dict_sorted_list(chars_dict)
 
+    print("--- Begin report of books/frankenstein.txt ---")
+    print(f"{num_words} words found in the document")
+    print()
+    #print_report(chars_dict)
+    for item in chars_sorted_list:
+        if not item["char"].isalpha():
+            continue
+        print(f"The '{item['char']}' character was found {item['num']} times")
+    print("--- End report ---")
 
-def calcute_words(file):
+def get_book_to_text(path):
+    with open(path) as f:
+        return f.read()
+
+def get_num_words(file):
     words = file.split()
     return len(words)
 
-def count_characters(file):
+def get_chars_dict(file):
     file_lower = file.lower()
     output = {}
     for char in file_lower:
@@ -31,11 +40,18 @@ def print_report(dictionaries):
     dict(sorted(dictionaries.items(), key=lambda item: item[1]))
     for char in dictionaries:
         if re.match(char_parttern,char):
-            count = dictionaries[char]
-            print(f"The '{char}' character was found {count} times")
+            num_words = dictionaries[char]
+            print(f"The '{char}' character was found {num_words} times")
             
 
 def sort_on(dict):
     return dict["num"]
+
+def chars_dict_sorted_list(num_chars_dict):
+    sorted_list = []
+    for ch in num_chars_dict:
+        sorted_list.append({"char": ch, "num": num_chars_dict[ch]})
+    sorted_list.sort(reverse=True, key=sort_on)
+    return sorted_list
 
 main()
